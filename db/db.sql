@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 20-08-2020 a las 02:11:40
+-- Tiempo de generación: 20-08-2020 a las 14:23:44
 -- Versión del servidor: 10.1.26-MariaDB
 -- Versión de PHP: 7.1.8
 
@@ -55,10 +55,10 @@ INSERT INTO `devices` (`id`, `uid`, `description`, `location`, `valve_id`) VALUE
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `irrigation`
+-- Estructura de tabla para la tabla `logs`
 --
 
-CREATE TABLE `irrigation` (
+CREATE TABLE `logs` (
   `id` int(11) NOT NULL,
   `state` int(11) DEFAULT NULL,
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -66,10 +66,10 @@ CREATE TABLE `irrigation` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 --
--- Volcado de datos para la tabla `irrigation`
+-- Volcado de datos para la tabla `logs`
 --
 
-INSERT INTO `irrigation` (`id`, `state`, `time`, `valve_id`) VALUES
+INSERT INTO `logs` (`id`, `state`, `time`, `valve_id`) VALUES
 (1, 0, '0000-00-00 00:00:00', 1),
 (2, 0, '0000-00-00 00:00:00', 2),
 (3, 0, '0000-00-00 00:00:00', 3),
@@ -105,7 +105,7 @@ INSERT INTO `measurements` (`id`, `time`, `data`, `device_id`) VALUES
 
 CREATE TABLE `state_valve` (
   `valve_id` int(11) NOT NULL,
-  `irrigation_id` int(11) NOT NULL
+  `state` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 -- --------------------------------------------------------
@@ -143,9 +143,9 @@ ALTER TABLE `devices`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `irrigation`
+-- Indices de la tabla `logs`
 --
-ALTER TABLE `irrigation`
+ALTER TABLE `logs`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -170,9 +170,9 @@ ALTER TABLE `valve`
 ALTER TABLE `devices`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 --
--- AUTO_INCREMENT de la tabla `irrigation`
+-- AUTO_INCREMENT de la tabla `logs`
 --
-ALTER TABLE `irrigation`
+ALTER TABLE `logs`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT de la tabla `measurements`
