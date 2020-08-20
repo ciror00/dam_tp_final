@@ -10,7 +10,6 @@ var configMysql = {
 var pool = mysql.createPool(configMysql);
 pool.getConnection((err, connection) => {
     if (err) {
-    	console.error(err);
         switch (err.code) {
             case 'PROTOCOL_CONNECTION_LOST':
                 console.error('La conexion a la DB se cerró.');
@@ -22,9 +21,7 @@ pool.getConnection((err, connection) => {
                 console.error('La conexion fue rechazada');
         }
         if (connection) {
-            console.error('Conexion exitosa');
             connection.release();
-            
         }
         return;
     }
