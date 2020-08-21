@@ -8,7 +8,7 @@ CONTAINER_NAME=mysql-server
 CONTAINER_DIRECTORY=/var/lib/mysql
 CONTAINER_PORT=3306
 
-MACHINE_DIRECTORY=$PWD/DB
+MACHINE_DIRECTORY=$PWD/db
 MACHINE_PORT=3306
 
 PASSWORD=userpass
@@ -21,6 +21,8 @@ printf "puerto expuesto: $MACHINE_PORT\n"
 printf "contraseña: $PASSWORD\n"
 printf "Base de datos: $DATABASE\n"
 printf "=====================================================================\n"
+
+docker network create --driver bridge mysql-net
 
 docker run \
 --rm \
