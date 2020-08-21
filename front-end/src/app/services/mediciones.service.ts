@@ -12,7 +12,7 @@ export class MedicionesService {
   constructor(private _http: HttpClient) { }
 
   public getMediciones(dispId: number): Promise<Array<Medicion>> {
-    return this._http.get("http://localhost:5000/mediciones/" + dispId)
+    return this._http.get("http://localhost:3000/mediciones/" + dispId)
       .toPromise()
       .then((m: Array<FilaMedicion>) => {
         let measurements: Array<Medicion> = new Array<Medicion>();
@@ -30,7 +30,7 @@ export class MedicionesService {
   }
 
   public newMedicion(data: newMedicion) {
-    return this._http.post('http://localhost:5000/mediciones', data)
+    return this._http.post('http://localhost:3000/mediciones', data)
       .toPromise()
       .then((result) => {
         return result;
