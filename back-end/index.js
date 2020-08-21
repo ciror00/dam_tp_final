@@ -21,5 +21,6 @@ app.use('/api/medicion', routerMedicion);
 app.use('/api/riego', routerRiego);
 
 app.listen(PORT, function(req, res) {
-    console.log("API Funcionando ");
+    console.log("[MJS]\tServicios online");
+    console.log("[MJS]\tPuerto: "+PORT);
 });
