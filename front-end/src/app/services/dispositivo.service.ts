@@ -13,7 +13,7 @@ export class DispositivoService {
   constructor(private _http: HttpClient) { }
 
   public get listado(): Promise<Array<Dispositivo>> {
-    return this._http.get("http://localhost:3000/dispositivos").toPromise().then(
+    return this._http.get("http://localhost:3000/api/dispositivo").toPromise().then(
       (listado: Array<FilaListado>) => {
         console.log(listado);
         let listado2: Array<Dispositivo> = new Array<Dispositivo>();
@@ -35,7 +35,7 @@ export class DispositivoService {
   }
 
   public getDispositivo(id: number): Promise<Dispositivo> {
-    return this._http.get("http://localhost:3000/dispositivos/" + id).toPromise().then(
+    return this._http.get("http://localhost:3000/api/dispositivo/" + id).toPromise().then(
       (r: FilaListado) => {
         let d = r[0];
         let dispositivo: Dispositivo = new Dispositivo(

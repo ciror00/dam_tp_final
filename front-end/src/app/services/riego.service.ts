@@ -12,7 +12,7 @@ export class RiegoService {
   constructor(private _http: HttpClient) { }
 
   public getRiegoLog(valve: number): Promise<Array<RiegoLog>> {
-    return this._http.get(`http://localhost:3000/riego/${valve}`)
+    return this._http.get(`http://localhost:3000/api/riego/${valve}`)
       .toPromise()
       .then((table: Array<FilaLogRiego>) => {
         let logRiego: Array<RiegoLog> = new Array<RiegoLog>();
@@ -30,7 +30,7 @@ export class RiegoService {
   }
 
   public newRiegoLog(fila: FilaLogRiego) {
-    return this._http.post(`http://localhost:3000/riego/`,[fila.apertura, fila.electrovalvulaId]).toPromise()
+    return this._http.post(`http://localhost:3000/api/riego/`,[fila.apertura, fila.electrovalvulaId]).toPromise()
       .then((result) => {
         return result;
       });
