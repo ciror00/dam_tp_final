@@ -1,13 +1,13 @@
 //correr antes npm install --save highcharts
 import { Component, OnInit } from '@angular/core';
-import * as Highcharts from 'highcharts';
-import { Dispositivo } from '../models/dispositivo.model';
-import { DispositivoService } from '../services/dispositivo.service';
 import { ActivatedRoute } from '@angular/router';
+import { Medicion } from '../model/Medicion';
+import { Riego } from '../model/Riego';
+import { MedicionService } from '../services/medicion.service';
+
+
+import * as Highcharts from 'highcharts';
 import { RiegoService } from '../services/riego.service';
-import { FilaLogRiego } from '../models/filaLogRiego.interface';
-import { MedicionesService } from '../services/mediciones.service';
-import { newMedicion } from '../models/newMedicion.interface';
 declare var require: any;
 require('highcharts/highcharts-more')(Highcharts);
 require('highcharts/modules/solid-gauge')(Highcharts);
@@ -19,186 +19,175 @@ require('highcharts/modules/solid-gauge')(Highcharts);
 })
 export class DetalleSensorPage implements OnInit {
 
-  public mensajeBoton: string = "ABRIR ELECTROVALVULA";
-
-  private valorObtenido: number = 0;
+  private valorObtenido:number=0;
   public myChart;
   private chartOptions;
+  public idDispositivo:String;
+  public medicion:Medicion;
+  public riego:Riego;
+  public Accionar_EV:String = 'Abrir';
+  public Estado_EV:number = 0;
 
-  public dispositivo: Dispositivo;
+  constructor(private router:ActivatedRoute, private mServ:MedicionService, private rServ:RiegoService) { 
 
-  public laGranBilardo: Array<Dispositivo>;
-
-  constructor(
-    private dServ: DispositivoService, 
-    private router: ActivatedRoute, 
-    private rServ: RiegoService,
-    private mServ: MedicionesService
-    ) {
-    this.laGranBilardo = new Array<Dispositivo>();
-    setTimeout(() => {
-      console.log("Cambio el valor del sensor");
-      this.valorObtenido = this.dispositivo.medicion.valor;
-      //llamo al update del chart para refrescar y mostrar el nuevo valor
-      this.myChart.update({
-        series: [{
-          name: 'kPA',
-          data: [this.valorObtenido],
-          tooltip: {
-            valueSuffix: ' kPA'
-          }
-        }]
-      });
-    }, 6000);
   }
 
   ngOnInit() {
-    let id: number = parseInt(this.router.snapshot.paramMap.get('id'));
-    this.dServ.getDispositivo(id).then(d => {
-      console.log(d);
-      this.dispositivo = d;
-      this.laGranBilardo.push(this.dispositivo);
-      if(this.dispositivo.electrovalvula.apertura == 0)
-        this.mensajeBoton = "ABRIR ELECTROVALVULA " + this.dispositivo.electrovalvula.id;
-      else
-        this.mensajeBoton = "CERRAR ELECTROVALVULA " + this.dispositivo.electrovalvula.id;
-    });
+    
+    
   }
 
-  ionViewDidEnter() {
+  async switchEV(){
+    //Calculo la fecha
+    let current_datetime = new Date()
+    let formatted_date = current_datetime.getFullYear() + "-" + (current_datetime.getMonth() + 1) + "-" + current_datetime.getDate() + " " + current_datetime.getHours() + ":" + current_datetime.getMinutes() + ":" + current_datetime.getSeconds() 
+    
+    // Calculo valor aleatorio entre 0 y 100
+    this.valorObtenido = Math.round(Math.random()*100);
+    
+    if(this.Accionar_EV == 'Abrir'){
+      // Invierto estado del botón
+      this.Accionar_EV = 'Cerrar';
+
+    }
+
+    else{
+      // Invierto estado del botón
+      this.Accionar_EV = 'Abrir';
+
+      // Loggueo medición
+      let a : Medicion= new Medicion(99,formatted_date,+this.valorObtenido,this.idDispositivo);
+      
+      await this.mServ.agregarMedicion(a);
+
+      // Actualizo Chart
+      this.myChart.update({series: [{
+        name: 'kPA',
+        data: [+this.valorObtenido],
+        tooltip: {
+            valueSuffix: ' kPA'
+        }
+      }]});
+    }
+
+    //Invierto estado de electroválvula
+    if(this.Estado_EV)
+      this.Estado_EV = 0;
+    else
+      this.Estado_EV = 1;
+
+    // loggeo cambio en la tabla
+    let r : Riego = new Riego(99,formatted_date,this.Estado_EV,this.riego.electrovalvulaId);
+
+    this.rServ.agregarRiego(r);
+
+  }
+
+  async ionViewWillEnter() {
+    //Para un determinado ID
+    this.idDispositivo = this.router.snapshot.paramMap.get('id');
+    // Busco la última medición
+    this.medicion = await this.mServ.getMedicionByIdDispositivo(this.idDispositivo);
+    // y el último log de riego
+    this.riego = await this.rServ.getRiegoByIdDispositivo(this.idDispositivo);
+  
+    // Cargo el valor en una variable para mostrar
+    this.valorObtenido = this.medicion.valor;
+
+    // Veo estado de EV según último Log
+    this.Estado_EV = this.riego.apertura;
+    
+    // Si está abierta, la acción del botoń es cerrar
+    if(this.Estado_EV)
+      this.Accionar_EV = 'Cerrar';
+    else
+      this.Accionar_EV = 'Abrir';
+
+
+    // Genero Chart
     this.generarChart();
+    
+    this.myChart.update({series: [{
+      name: 'kPA',
+      data: [+this.valorObtenido],
+      tooltip: {
+          valueSuffix: ' kPA'
+      }
+    }]});
+
+
+
   }
 
   generarChart() {
-    this.chartOptions = {
+    this.chartOptions={
       chart: {
-        type: 'gauge',
-        plotBackgroundColor: null,
-        plotBackgroundImage: null,
-        plotBorderWidth: 0,
-        plotShadow: false
-      }
-      , title: {
-        text: this.dispositivo.nombre
-      }
+          type: 'gauge',
+          plotBackgroundColor: null,
+          plotBackgroundImage: null,
+          plotBorderWidth: 0,
+          plotShadow: false
+        }
+        ,title: {
+          text: 'Sensor N° ' + this.idDispositivo
+        }
 
-      , credits: { enabled: false }
-
-
-      , pane: {
-        startAngle: -150,
-        endAngle: 150
-      }
-      // the value axis
-      , yAxis: {
+        ,credits:{enabled:false}
+        
+           
+        ,pane: {
+            startAngle: -150,
+            endAngle: 150
+        } 
+        // the value axis
+      ,yAxis: {
         min: 0,
         max: 100,
-
+  
         minorTickInterval: 'auto',
         minorTickWidth: 1,
         minorTickLength: 10,
         minorTickPosition: 'inside',
         minorTickColor: '#666',
-
+  
         tickPixelInterval: 30,
         tickWidth: 2,
         tickPosition: 'inside',
         tickLength: 10,
         tickColor: '#666',
         labels: {
-          step: 2,
-          rotation: 'auto'
+            step: 2,
+            rotation: 'auto'
         },
         title: {
-          text: 'kPA'
+            text: 'kPA'
         },
         plotBands: [{
-          from: 0,
-          to: 10,
-          color: '#BBBBBB'
+            from: 0,
+            to: 10,
+            color: '#55BF3B' // green
         }, {
-          from: 10,
-          to: 30,
-          color: '#55BF3B'
+            from: 10,
+            to: 30,
+            color: '#DDDF0D' // yellow
         }, {
-          from: 30,
-          to: 60,
-          color: '#DDDF0D'
-        }, {
-          from: 60,
-          to: 100,
-          color: '#DF5353'
+            from: 30,
+            to: 100,
+            color: '#DF5353' // red
         }]
-      }
-      ,
-
-      series: [{
+    }
+    ,
+  
+    series: [{
         name: 'kPA',
-        data: [this.valorObtenido],
+        data: [+this.valorObtenido],
         tooltip: {
-          valueSuffix: ' kPA'
+            valueSuffix: ' kPA'
         }
-      }]
+    }]
 
     };
-    this.myChart = Highcharts.chart('highcharts', this.chartOptions);
+    this.myChart = Highcharts.chart('highcharts', this.chartOptions );
   }
 
-  public cerrarValvula() {
-    let data:FilaLogRiego = { 
-      logRiegoId: 0,
-      apertura: 0,
-      fecha: new Date(), 
-      electrovalvulaId: this.dispositivo.electrovalvula.id
-    }
-    this.rServ.newRiegoLog(data).then( (res) => {
-      this.dispositivo.electrovalvula.apertura = 0;
-      this.mensajeBoton = "ABRIR ELECTROVALVULA" + ' ' + this.dispositivo.electrovalvula.id;
-      console.log(res);
-      let medicion: newMedicion = {
-        valor: this.valorAleatorio(),
-        dispositivoId: this.dispositivo.id
-      };
-      this.mServ.newMedicion(medicion).then( (res) => {
-        console.log(res);
-
-        this.myChart.update(
-          {
-            series: [
-              {
-                name: 'kPA',
-                data: [parseInt(medicion.valor)],
-                tooltip: { valueSuffix: ' kPA' }
-              }
-            ]
-          }
-        );
-      })
-    })
-  }
-
-  public valorAleatorio(): string {
-    return Math.floor(100 * Math.random()).toString();
-  }
-
-  public actualizarValvula() {
-    if(this.dispositivo.electrovalvula.apertura == 0)
-      this.abrirValvula();
-    else
-      this.cerrarValvula();
-  }
-
-  public abrirValvula() {
-    let data: FilaLogRiego = {
-      logRiegoId: 0,
-      apertura: 100,
-      fecha: new Date(),
-      electrovalvulaId: this.dispositivo.electrovalvula.id
-    }
-    this.rServ.newRiegoLog(data).then( (res) => {
-      this.dispositivo.electrovalvula.apertura = 100;
-      this.mensajeBoton = "CERRAR ELECTROVALVULA" + ' ' + this.dispositivo.electrovalvula.id;
-      console.log(res);
-    })
-  }
 }

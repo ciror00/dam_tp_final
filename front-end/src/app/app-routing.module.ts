@@ -16,12 +16,12 @@ const routes: Routes = [
     loadChildren: () => import('./detalle-sensor/detalle-sensor.module').then( m => m.DetalleSensorPageModule)
   },
   {
-    path: 'log-riego/:dispId',
-    loadChildren: () => import('./log-riego/log-riego.module').then( m => m.LogRiegoPageModule)
+    path: 'log-sensor/:id',
+    loadChildren: () => import('./log-sensor/log-sensor.module').then( m => m.LogSensorPageModule)
   },
   {
-    path: 'mediciones/:dispId',
-    loadChildren: () => import('./mediciones/mediciones.module').then( m => m.MedicionesPageModule)
+    path: 'log-ev/:id',
+    loadChildren: () => import('./log-ev/log-ev.module').then( m => m.LogEvPageModule)
   },
 ];
 

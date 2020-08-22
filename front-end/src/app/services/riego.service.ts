@@ -1,38 +1,32 @@
 import { Injectable } from '@angular/core';
-import { RiegoLog } from '../models/riego.model';
 import { HttpClient } from '@angular/common/http';
-import { FilaLogRiego } from '../models/filaLogRiego.interface';
-import { Electrovalvula } from '../models/electrovalvula.model';
+import { Riego } from '../model/Riego'
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class RiegoService {
+  urlApi="http://localhost:3000";
+  
+  constructor(private _http: HttpClient ) {
+   }
 
-  constructor(private _http: HttpClient) { }
+  getRiegoByIdDispositivo(id):Promise<Riego>{     
+    return this._http.get(this.urlApi+"/api/riego/"+id).toPromise().then((riego:Riego)=>{
+      return riego;
+    });
+  };
 
-  public getRiegoLog(valve: number): Promise<Array<RiegoLog>> {
-    return this._http.get(`http://localhost:3000/api/riego/${valve}`)
-      .toPromise()
-      .then((table: Array<FilaLogRiego>) => {
-        let logRiego: Array<RiegoLog> = new Array<RiegoLog>();
-        table.forEach(row => logRiego.push(new RiegoLog(
-          new Electrovalvula(row.electrovalvulaId),
-          row.apertura,
-          row.fecha
-        )))
-        return logRiego;
-      })
-      .catch((err) => {
-        console.log("error en la consulta");
-        return new Array<RiegoLog>(new RiegoLog());
-      })
-  }
+  getRiegosByIdDispositivo(id):Promise<Riego[]>{     
+    return this._http.get(this.urlApi+"/api/riego/"+id+"/todas").toPromise().then((riego:Riego[])=>{
+      return riego;
+    });
+  };
 
-  public newRiegoLog(fila: FilaLogRiego) {
-    return this._http.post(`http://localhost:3000/api/riego/`,[fila.apertura, fila.electrovalvulaId]).toPromise()
-      .then((result) => {
-        return result;
-      });
+  agregarRiego(riego:Riego){
+    return this._http.post(this.urlApi+"/api/riego/agregar",{fecha:riego.fecha,valor:riego.apertura,electrovalvulaId: riego.electrovalvulaId}).toPromise().then((result)=>{
+      return result;
+    });
   }
 }
