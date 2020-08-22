@@ -8,6 +8,7 @@ import { MedicionService } from '../services/medicion.service';
 
 import * as Highcharts from 'highcharts';
 import { RiegoService } from '../services/riego.service';
+import { Dispositivo } from '../model/Dispositivo';
 declare var require: any;
 require('highcharts/highcharts-more')(Highcharts);
 require('highcharts/modules/solid-gauge')(Highcharts);
@@ -45,15 +46,15 @@ export class DetalleSensorPage implements OnInit {
     // Calculo valor aleatorio entre 0 y 100
     this.valorObtenido = Math.round(Math.random()*100);
     
-    if(this.Accionar_EV == 'Abrir'){
+    if(this.Accionar_EV == 'Prender'){
       // Invierto estado del botón
-      this.Accionar_EV = 'Cerrar';
+      this.Accionar_EV = 'Apagar';
 
     }
 
     else{
       // Invierto estado del botón
-      this.Accionar_EV = 'Abrir';
+      this.Accionar_EV = 'Prender';
 
       // Loggueo medición
       let a : Medicion= new Medicion(99,formatted_date,+this.valorObtenido,this.idDispositivo);
@@ -129,7 +130,7 @@ export class DetalleSensorPage implements OnInit {
           plotShadow: false
         }
         ,title: {
-          text: 'Sensor N° ' + this.idDispositivo
+          text: 'Humedad de la maceta '
         }
 
         ,credits:{enabled:false}
@@ -160,7 +161,7 @@ export class DetalleSensorPage implements OnInit {
             rotation: 'auto'
         },
         title: {
-            text: 'kPA'
+            text: 'H'
         },
         plotBands: [{
             from: 0,

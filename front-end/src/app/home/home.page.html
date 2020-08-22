@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
     <ion-toolbar>
         <ion-title>
-            Listado de Dispositivos
+            Trabajo Final: Sistema de Riego Inteligente 
         </ion-title>
     </ion-toolbar>
 </ion-header>
@@ -15,7 +15,7 @@
     <ion-list>
         <ion-item *ngFor="let dispositivo of this.listadoDispositivo" routerLink="/detalle-sensor/{{dispositivo.id}}" routerDirection="root">
             <ion-avatar slot="start">
-                <ion-icon size="large" name="thermometer"></ion-icon>
+                <ion-icon size="large" name="leaf-outline"></ion-icon>
             </ion-avatar>
             <ion-label>
                 <h2>{{dispositivo.id}} - {{dispositivo.nombre}}</h2>

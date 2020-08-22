@@ -5,19 +5,29 @@
               <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
           </ion-button>
       </ion-buttons>
-      <ion-title>Dispositivo - {{this.id}}</ion-title>
+      <ion-title>Maceta {{this.idDispositivo}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <div id="highcharts" style="width:100%; height:300px;"></div>
-  <ion-item> 
-  <ion-button expand="block" fill="outline" (click)='switchEV()' [appResaltarBoton]='color'>{{Accionar_EV}} Electroválvula</ion-button>
-</ion-item>
-<ion-item routerLink="/log-sensor/{{this.idDispositivo}}" routerDirection="root"> 
-  <ion-button expand="block" fill="outline" [appResaltarBoton]='color'>Ver Log Sensor</ion-button>
-</ion-item>
-<ion-item routerLink="/log-ev/{{this.idDispositivo}}" routerDirection="root"> 
-  <ion-button expand="block" fill="outline" [appResaltarBoton]='color'>Ver Log Electroválvula</ion-button>
-</ion-item>
-</ion-content>
+<ion-body lines="full">
+<div id="highcharts" style="width:100%; height:300px;"></div>
+</ion-body>
+
+<ion-footer>
+<ion-button expand="block" fill="solid" size="medium" (click)='switchEV()' [appResaltarBoton]='color'>{{Accionar_EV}} regadera</ion-button>
+
+<ion-grid>
+  <ion-row>
+    <ion-col>
+      <ion-item routerLink="/log-sensor/{{this.idDispositivo}}" routerDirection="root"> 
+        <ion-button expand="block" fill="outline" [appResaltarBoton]='color'>Estado de la maceta</ion-button>
+      </ion-item>
+    </ion-col>
+    <ion-col>
+      <ion-item routerLink="/log-ev/{{this.idDispositivo}}" routerDirection="root"> 
+        <ion-button expand="block" fill="outline" [appResaltarBoton]='color'>Registro de riego</ion-button>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+</ion-grid>
+</ion-footer>
