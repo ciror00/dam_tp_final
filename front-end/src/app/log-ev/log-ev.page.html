@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar>
+      <ion-buttons slot="start">
+          <ion-button routerLink="/detalle-sensor/{{this.idDispositivo}}" routerDirection="back">
+              <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+          </ion-button>
+      </ion-buttons>
+      <ion-title>Registro de riego en Maceta {{this.idDispositivo}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid class="ion-align-items-center">
+    <ion-row >
+      <ion-col>Fecha</ion-col>
+      <ion-col>Cantidad</ion-col>  
+    </ion-row>
+
+    <ion-row  *ngFor="let rie of this.riegoArray">
+      <ion-col>{{rie.fecha | datePipe}}</ion-col>       
+      <ion-col>{{rie.apertura}}</ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
