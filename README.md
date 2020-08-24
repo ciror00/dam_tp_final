@@ -10,6 +10,8 @@ Este trabajo se realiza como proyecto integrador de la materia **Desarrollo de A
 
 ## Pre-requisitos
 
+Sistema operativo **Ubuntu 16**, o superior.
+
 Es necesario tener instaladas las siguientes herramietnas:
  - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
  - [Docker](https://docs.docker.com/get-docker/)
